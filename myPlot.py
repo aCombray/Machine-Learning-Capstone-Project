@@ -11,12 +11,6 @@ import numpy as np
 import seaborn as sns
 color = sns.color_palette()
 import matplotlib.pyplot as plt
-get_ipython().magic(u'matplotlib inline')
-import matplotlib.dates as mdates
-import plotly.offline as py
-py.init_notebook_mode(connected=True)
-import plotly.graph_objs as go
-import plotly.tools as tls
 
 
 # In[2]:
