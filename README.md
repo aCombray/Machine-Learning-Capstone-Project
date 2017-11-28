@@ -30,6 +30,8 @@ More precisely, we have six transformers in the first layer:
 - ('building_i', building), high cardinality categorical data, aggregate with expectation of the interest level. The cut off between the conditional expectation and ordinary expectation is the logistic function. 
 - ('display_address', dis_add), high cardinality categorical data, aggregate with expectation of the interest level. The cut off between the conditional expectation and ordinary expectation is the logistic function. 
 
+The meta estimator of the second layer is a LightGBM gradient boosting tree classifier. A gradient boosting tree classifier is usually the best choice for combining heterogeneous data. 
+
 ### Evaluation
 The metric function is the log loss. Currently, the log loss on the leadboard is 0.53502, which agrees with our expectation. According to discussion board, this already reaches the best performances of single models of some of the top leaders before the leak information is provided by @KazAnova. It may be further improved by finer parameter tuning. 
 
