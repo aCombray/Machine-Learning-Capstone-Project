@@ -3,23 +3,35 @@
 This is from Kaggle competition: [Two Sigma Connect: Rental Listing Inquiries](https://www.kaggle.com/c/two-sigma-connect-rental-listing-inquiries).
 It is also used as the final project for Udacity Machine Learning Engineering Nanodegree.
 
-### Plan
-There are five parts of the model.
-- The price information related to the basic information, bedrooms, bathrooms.
-- The location information, includes longitude, lattitude, addresses.
-- The listing information: manager id, building id and listing id.
-- Text Description of the listing
-- Photos.
+### Problem 
+The goal is to predict the interest level for a rental listing on the Renthop website. This is a typical classification problem. The possible interest levels are low, medium and high. With almost 70% listings are ranked as low, the data is skewed. So we must be very careful when the accuracy is around 70%. It may just predict every listing to be low. 
 
-We plan to have five different models for each of the data above and the combine their prediction to make the final prediction. I will try to use a Neural netweek with 5 nodes to combine them. 
+### Data
+The characteristic of the project is the heterogeneous data. 
+- Ordinary numerical features: price, bedrooms, bathrooms, longitude, latitude.
+- High cardinality categorical features: manager id, building id, listing id, street address, display address.
+- Text: description of the listings, features of the listings. 
+- Image: photos of the listings.
+- Time series: created time of the listings. 
 
-### Finished
-There are five parts of the model.
-- The price information related to the basic information, bedrooms, bathrooms.
-- The location information, includes longitude, lattitude, addresses.
-- The listing information: manager id, building id and listing id.
+We can also classify the data into
+- Information about the housing condition: price, features, description, photos.
+- Information about the location: longitude, latitude.
+- Information about the manager skills: manager id, created time.
 
-We have studied the first three parts and tested the model from them on toy model (60% of the training data). The performance is around 0.58 log loss.
+### Model architecture
+We design the model as a two-layer stack. The first layer transformed high-cardinality data, text, images and time series to ordinary numerical features using appropriate base estimators built on 5-fold splits.  The second layer combined the transformed results with other ordinary features.
 
-### To Do
-The next is text and photos. 
+More precisely, we have six transformers in the first layer:
+- ('price_pred', price_pred), do a regression of the log of price based on bathrooms, bedrooms, longitude and latitude. Then take the difference between predicted log price and the actual log price. 
+- ('text_nn', text_nn), make transformations Tfidf followed by NMF of both the features and description. For description, we get 2 and 3-gram tokens and Train a 3-layer keras NN on the vectors. 
+- ('photos', photos), take statistics from ImageStat of PIL library and then transform by a logistic regression.
+- ('manager_i', manager), high cardinality categorical data, aggregate with expectation of the interest level. The cut off between the conditional expectation and ordinary expectation is the logistic function. 
+- ('building_i', building), high cardinality categorical data, aggregate with expectation of the interest level. The cut off between the conditional expectation and ordinary expectation is the logistic function. 
+- ('display_address', dis_add), high cardinality categorical data, aggregate with expectation of the interest level. The cut off between the conditional expectation and ordinary expectation is the logistic function. 
+
+### Evaluation
+The metric function is the log loss. Currently, the log loss on the leadboard is 0.53502, which agrees with our expectation. According to discussion board, this already reaches the best performances of single models of some of the top leaders before the leak information is provided by @KazAnova. It may be further improved by finer parameter tuning. 
+
+### To Do in the future
+It is possible to train the actual photos by transfer learning. However, the computing resources required is beyond my current laptop. Moreover, from the discussion, it seems not to benefit the model a lot so not many participants tried it. I think a more meaningful model may try to distinguish teh outdoor and indoor photos. 
