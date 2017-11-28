@@ -15,12 +15,12 @@ The characteristic of the project is the heterogeneous data.
 - Time series: created time of the listings. 
 
 We can also classify the data into
-- Information about the housing condition: price, features, description, photos.
-- Information about the location: longitude, latitude.
+- Information about the housing condition: price, bathrooms, bedrooms, features, description, photos, building id.
+- Information about the location: longitude, latitude, street address, display address.
 - Information about the manager skills: manager id, created time.
 
 ### Model architecture
-We design the model as a two-layer stack. The first layer transformed high-cardinality data, text, images and time series to ordinary numerical features using appropriate base estimators built on 5-fold splits.  The second layer combined the transformed results with other ordinary features.
+We design the model as a two-layer stack. The first layer transformed high-cardinality data, text, images and time series to ordinary numerical features using appropriate base estimators built on 5-fold splits.  The second layer combined the transformed results with other ordinary engineered features.
 
 More precisely, we have six transformers in the first layer:
 - ('price_pred', price_pred), do a regression of the log of price based on bathrooms, bedrooms, longitude and latitude. Then take the difference between predicted log price and the actual log price. 
